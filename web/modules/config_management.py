@@ -512,10 +512,12 @@ def render_env_status():
 
     with col1:
         if env_status["env_file_exists"]:
-            st.success("✅ .env 文件已存在")
+            if env_status.get("has_streamlit_secrets"):
+                st.success("✅ 配置已加载 (Streamlit Secrets)")
+            else:
+                st.success("✅ .env 文件已存在")
         else:
-            st.error("❌ .env 文件不存在")
-            st.info("💡 请复制 .env.example 为 .env 并配置API密钥")
+            st.warning("⚡ 使用环境变量/Secrets 配置")
 
     with col2:
         # 统计已配置的API密钥数量
@@ -529,21 +531,25 @@ def render_env_status():
 
         with api_col1:
             st.write("**大模型API密钥:**")
-            for provider, configured in env_status["api_keys"].items():
-                if provider in ["dashscope", "openai", "google", "anthropic"]:
-                    status = "✅ 已配置" if configured else "❌ 未配置"
-                    provider_name = {
-                        "dashscope": "阿里百炼",
-                        "openai": "OpenAI",
-                        "google": "Google AI",
-                        "anthropic": "Anthropic"
-                    }.get(provider, provider)
-                    st.write(f"- {provider_name}: {status}")
+            llm_providers = {
+                "deepseek": "DeepSeek",
+                "dashscope": "阿里百炼",
+                "openai": "OpenAI",
+                "google": "Google AI",
+                "anthropic": "Anthropic"
+            }
+            for provider, provider_name in llm_providers.items():
+                configured = env_status["api_keys"].get(provider, False)
+                status = "✅ 已配置" if configured else "❌ 未配置"
+                st.write(f"- {provider_name}: {status}")
 
         with api_col2:
-            st.write("**其他API密钥:**")
-            finnhub_status = "✅ 已配置" if env_status["api_keys"]["finnhub"] else "❌ 未配置"
-            st.write(f"- FinnHub (金融数据): {finnhub_status}")
+            st.write("**数据源API密钥:**")
+            finnhub_status = "✅ 已配置" if env_status["api_keys"].get("finnhub", False) else "❌ 未配置"
+            tushare_status = "✅ 已配置" if env_status["api_keys"].get("tushare", False) else "❌ 未配置"
+            st.write(f"- FinnHub (美股): {finnhub_status}")
+            st.write(f"- Tushare (A股): {tushare_status}")
+            st.write(f"- AKShare (A股): ✅ 免费无需密钥")
 
             reddit_status = "✅ 已配置" if env_status["other_configs"]["reddit_configured"] else "❌ 未配置"
             st.write(f"- Reddit API: {reddit_status}")

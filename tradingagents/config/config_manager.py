@@ -480,14 +480,34 @@ class ConfigManager:
 
     def get_env_config_status(self) -> Dict[str, Any]:
         """获取.env配置状态"""
+        env_exists = (Path(__file__).parent.parent.parent / ".env").exists()
+        # Streamlit Cloud: check if secrets are available
+        has_streamlit_secrets = False
+        try:
+            import streamlit as st
+            if st.secrets:
+                has_streamlit_secrets = True
+        except Exception:
+            pass
+
+        def is_valid(key_val):
+            if not key_val:
+                return False
+            if key_val.startswith("your_"):
+                return False
+            return True
+
         return {
-            "env_file_exists": (Path(__file__).parent.parent.parent / ".env").exists(),
+            "env_file_exists": env_exists or has_streamlit_secrets,
+            "has_streamlit_secrets": has_streamlit_secrets,
             "api_keys": {
-                "dashscope": bool(os.getenv("DASHSCOPE_API_KEY")),
-                "openai": bool(os.getenv("OPENAI_API_KEY")),
-                "google": bool(os.getenv("GOOGLE_API_KEY")),
-                "anthropic": bool(os.getenv("ANTHROPIC_API_KEY")),
-                "finnhub": bool(os.getenv("FINNHUB_API_KEY")),
+                "dashscope": is_valid(os.getenv("DASHSCOPE_API_KEY")),
+                "deepseek": is_valid(os.getenv("DEEPSEEK_API_KEY")),
+                "openai": is_valid(os.getenv("OPENAI_API_KEY")),
+                "google": is_valid(os.getenv("GOOGLE_API_KEY")),
+                "anthropic": is_valid(os.getenv("ANTHROPIC_API_KEY")),
+                "finnhub": is_valid(os.getenv("FINNHUB_API_KEY")),
+                "tushare": is_valid(os.getenv("TUSHARE_TOKEN")),
             },
             "other_configs": {
                 "reddit_configured": bool(os.getenv("REDDIT_CLIENT_ID") and os.getenv("REDDIT_CLIENT_SECRET")),
