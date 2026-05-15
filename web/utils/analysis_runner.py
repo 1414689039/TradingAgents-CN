@@ -224,7 +224,7 @@ def run_stock_analysis(stock_symbol, analysis_date, analysts, research_depth, ll
     if not has_llm:
         raise ValueError("至少需要配置一个AI模型API密钥 (DeepSeek/DashScope/OpenAI等)")
     if not has_data:
-        raise ValueError("至少需要配置一个数据源API密钥 (FinnHub/Tushare)")
+        logger.warning("未配置数据源API密钥，将使用免费数据源 (AKShare/Yahoo Finance)")
 
     update_progress("环境变量验证通过")
 

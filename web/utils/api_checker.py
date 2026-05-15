@@ -77,10 +77,11 @@ def check_api_keys():
                           if key in ("FINNHUB_API_KEY", "TUSHARE_TOKEN"))
 
     missing_required = []
+    missing_warnings = []
     if not llm_configured:
         missing_required.append("至少一个AI模型密钥 (DeepSeek/DashScope/OpenAI等)")
     if not data_configured:
-        missing_required.append("至少一个数据源密钥 (FinnHub/Tushare)")
+        missing_warnings.append("建议配置数据源密钥 (FinnHub/Tushare)，A股可使用免费AKShare")
 
     return {
         "all_configured": len(missing_required) == 0,
