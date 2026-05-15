@@ -4,18 +4,18 @@
 
 typing-extensions
 openai>=1.0.0,<2.0.0
-langchain>=1.0.0
-langchain-core>=1.0.0
-langchain-openai>=1.0.0
-langchain-experimental>=0.3.0
-langchain-community>=0.3.0
+langchain
+langchain-core
+langchain-openai
+langchain-experimental
+langchain-community
 pandas
 yfinance
 praw
 feedparser
 stockstats
 eodhd
-langgraph>=0.4.0
+langgraph
 chromadb
 setuptools
 backtrader
@@ -31,8 +31,8 @@ redis
 chainlit
 rich
 questionary
-langchain_anthropic>=0.3.0,<1.0.0
-langchain-google-genai>=2.0.0,<3.0.0
+langchain_anthropic
+langchain-google-genai
 google-genai>=0.1.0
 google-generativeai>=0.8.0
 dashscope
