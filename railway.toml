@@ -1,0 +1,5 @@
+[build]
+dockerfile = "Dockerfile.backend"
+
+[service]
+port = 8000

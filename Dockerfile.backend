@@ -1,0 +1,23 @@
+FROM python:3.10-slim-bookworm
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt requirements-backend.txt /app/
+
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-backend.txt
+
+COPY . /app/
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUTF8=1 \
+    PYTHONIOENCODING=utf-8
+
+EXPOSE 8000
+
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
