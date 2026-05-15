@@ -7,6 +7,7 @@ TradingAgents-CN Streamlit Web界面
 import streamlit as st
 import os
 import sys
+import traceback
 from pathlib import Path
 import datetime
 import time
@@ -803,8 +804,10 @@ def main():
 
                     except Exception as e:
                         # 标记分析失败（不访问session state）
-                        async_tracker.mark_failed(str(e))
-                        logger.error(f"❌ [分析失败] {analysis_id}: {e}")
+                        tb = traceback.format_exc()
+                        error_detail = f"{e}\n\nTraceback (last lines):\n{tb[-800:]}"
+                        async_tracker.mark_failed(error_detail)
+                        logger.error(f"❌ [分析失败] {analysis_id}: {e}\n{tb}")
 
                     finally:
                         # 分析结束后注销线程
