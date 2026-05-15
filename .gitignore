@@ -13,21 +13,21 @@ __pycache__/
 .env.*.local
 .env.db
 .env.mongodb*
-frontend
-backend
 
 # 系统文件
 .DS_Store
 Thumbs.db
 
-# 数据文件
-*.csv
-*.json
-*.xlsx
-*.xls
+# 数据文件 (仅数据目录)
+data/*.csv
+data/*.json
+data/*.xlsx
+data/*.xls
+cache/*.csv
+cache/*.json
 
 # 项目特定目录
-src/
+/src/
 eval_results/
 eval_data/
 results/
@@ -75,6 +75,15 @@ docs/contribution/
 # AI工具目录 (不纳入版本控制)
 .trae/
 .augment/
+
+# Node.js
+node_modules/
+frontend/dist/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
 
 # 自动清理脚本添加的规则
 # Python包元数据

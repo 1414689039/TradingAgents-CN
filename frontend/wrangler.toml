@@ -1,0 +1,5 @@
+name = "tradingagents-cn"
+pages_build_output_dir = "dist"
+
+[env.production]
+vars = { VITE_API_URL = "https://your-backend-url.railway.app" }
