@@ -23,6 +23,15 @@ logger = get_logger('web')
 # 加载环境变量
 load_dotenv(project_root / ".env", override=True)
 
+# Streamlit Cloud: 从 st.secrets 加载密钥到环境变量
+try:
+    for key, value in st.secrets.items():
+        if key not in os.environ or not os.environ[key] or os.environ[key].startswith("your_"):
+            os.environ[key] = str(value)
+    logger.info("Loaded secrets from st.secrets")
+except Exception:
+    pass
+
 # 导入自定义组件
 from components.sidebar import render_sidebar
 from components.header import render_header
