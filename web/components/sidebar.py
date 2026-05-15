@@ -1041,8 +1041,27 @@ def render_sidebar():
         - [🔧 API密钥配置](../docs/security/api_keys_security.md)
         """)
     
+    # 智能检测：如果选中的provider没有API key，自动切换到可用的
+    def has_key(provider):
+        key_map = {
+            "dashscope": os.getenv("DASHSCOPE_API_KEY"),
+            "deepseek": os.getenv("DEEPSEEK_API_KEY"),
+            "openai": os.getenv("OPENAI_API_KEY"),
+            "google": os.getenv("GOOGLE_API_KEY"),
+            "openrouter": os.getenv("OPENROUTER_API_KEY"),
+        }
+        val = key_map.get(provider, "")
+        return val and not val.startswith("your_")
+
     # 确保返回session state中的值，而不是局部变量
     final_provider = st.session_state.llm_provider
+    if not has_key(final_provider):
+        # 自动切换到有key的provider
+        for p in ["deepseek", "dashscope", "openai", "google", "openrouter"]:
+            if has_key(p):
+                final_provider = p
+                st.session_state.llm_provider = p
+                break
     final_model = st.session_state.llm_model
 
     logger.debug(f"🔄 [Session State] 返回配置 - provider: {final_provider}, model: {final_model}")
