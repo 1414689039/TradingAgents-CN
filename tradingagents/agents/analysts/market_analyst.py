@@ -1,5 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import create_react_agent, AgentExecutor
+from langgraph.prebuilt import create_react_agent
 from langchain import hub
 import time
 import json
@@ -228,26 +228,22 @@ def create_market_analyst_react(llm, toolkit):
 ## 投资建议"""
 
             try:
-                # 创建ReAct Agent
+                # 创建ReAct Agent (langgraph API)
                 prompt = hub.pull("hwchase17/react")
-                agent = create_react_agent(llm, tools, prompt)
-                agent_executor = AgentExecutor(
-                    agent=agent,
-                    tools=tools,
-                    verbose=True,
-                    handle_parsing_errors=True,
-                    max_iterations=10,  # 增加到10次迭代，确保有足够时间完成分析
-                    max_execution_time=180  # 增加到3分钟，给更多时间生成详细报告
-                )
+                agent = create_react_agent(llm, tools, prompt=prompt)
 
                 logger.debug(f"📈 [DEBUG] 执行ReAct Agent查询...")
-                result = agent_executor.invoke({'input': query})
+                result = agent.invoke({"messages": [("user", query)]})
 
-                report = result['output']
+                # Extract last AI message as report
+                messages = result.get("messages", [])
+                report = messages[-1].content if messages else "Agent未返回结果"
                 logger.info(f"📈 [市场分析师] ReAct Agent完成，报告长度: {len(report)}")
 
             except Exception as e:
                 logger.error(f"❌ [DEBUG] ReAct Agent失败: {str(e)}")
+                import traceback as tb2
+                logger.error(tb2.format_exc())
                 report = f"ReAct Agent市场分析失败: {str(e)}"
         else:
             # 离线模式，使用原有逻辑
