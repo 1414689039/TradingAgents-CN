@@ -948,10 +948,18 @@ def render_sidebar():
             else:
                 return f"{key[:8]}... (格式异常)", "warning"
 
-        # 必需的API密钥
-        st.markdown("*必需配置:*")
+        # AI模型密钥 (至少需要一个)
+        st.markdown("*AI模型密钥 (至少需要一个):*")
 
-        # 阿里百炼
+        deepseek_key = os.getenv("DEEPSEEK_API_KEY")
+        status, level = validate_api_key(deepseek_key, "deepseek")
+        if level == "success":
+            st.success(f"✅ DeepSeek: {status}")
+        elif level == "warning":
+            st.warning(f"⚠️ DeepSeek: {status}")
+        else:
+            st.error("❌ DeepSeek: 未配置")
+
         dashscope_key = os.getenv("DASHSCOPE_API_KEY")
         status, level = validate_api_key(dashscope_key, "dashscope")
         if level == "success":
@@ -959,9 +967,11 @@ def render_sidebar():
         elif level == "warning":
             st.warning(f"⚠️ 阿里百炼: {status}")
         else:
-            st.error("❌ 阿里百炼: 未配置")
+            st.info("ℹ️ 阿里百炼: 未配置")
 
-        # FinnHub
+        # 数据源密钥 (至少需要一个)
+        st.markdown("*数据源密钥 (至少需要一个):*")
+
         finnhub_key = os.getenv("FINNHUB_API_KEY")
         status, level = validate_api_key(finnhub_key, "finnhub")
         if level == "success":
@@ -970,19 +980,6 @@ def render_sidebar():
             st.warning(f"⚠️ FinnHub: {status}")
         else:
             st.error("❌ FinnHub: 未配置")
-
-        # 可选的API密钥
-        st.markdown("*可选配置:*")
-
-        # DeepSeek
-        deepseek_key = os.getenv("DEEPSEEK_API_KEY")
-        status, level = validate_api_key(deepseek_key, "deepseek")
-        if level == "success":
-            st.success(f"✅ DeepSeek: {status}")
-        elif level == "warning":
-            st.warning(f"⚠️ DeepSeek: {status}")
-        else:
-            st.info("ℹ️ DeepSeek: 未配置")
 
         # Tushare
         tushare_key = os.getenv("TUSHARE_TOKEN")

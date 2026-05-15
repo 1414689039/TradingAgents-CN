@@ -199,19 +199,32 @@ def run_stock_analysis(stock_symbol, analysis_date, analysts, research_depth, ll
 
         update_progress(f"💰 预估分析成本: ¥{estimated_cost:.4f}")
 
-    # 验证环境变量
+    # 验证环境变量 - 检查至少有一个LLM密钥和一个数据源
     update_progress("检查环境变量配置...")
-    dashscope_key = os.getenv("DASHSCOPE_API_KEY")
-    finnhub_key = os.getenv("FINNHUB_API_KEY")
+    llm_keys = {
+        "DASHSCOPE_API_KEY": os.getenv("DASHSCOPE_API_KEY"),
+        "DEEPSEEK_API_KEY": os.getenv("DEEPSEEK_API_KEY"),
+        "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
+        "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY"),
+        "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
+    }
+    data_keys = {
+        "FINNHUB_API_KEY": os.getenv("FINNHUB_API_KEY"),
+        "TUSHARE_TOKEN": os.getenv("TUSHARE_TOKEN"),
+    }
 
-    logger.info(f"环境变量检查:")
-    logger.info(f"  DASHSCOPE_API_KEY: {'已设置' if dashscope_key else '未设置'}")
-    logger.info(f"  FINNHUB_API_KEY: {'已设置' if finnhub_key else '未设置'}")
+    for name, val in llm_keys.items():
+        logger.info(f"  {name}: {'已设置' if val and not val.startswith('your_') else '未设置'}")
+    for name, val in data_keys.items():
+        logger.info(f"  {name}: {'已设置' if val and not val.startswith('your_') else '未设置'}")
 
-    if not dashscope_key:
-        raise ValueError("DASHSCOPE_API_KEY 环境变量未设置")
-    if not finnhub_key:
-        raise ValueError("FINNHUB_API_KEY 环境变量未设置")
+    has_llm = any(v and not v.startswith("your_") for v in llm_keys.values())
+    has_data = any(v and not v.startswith("your_") for v in data_keys.values())
+
+    if not has_llm:
+        raise ValueError("至少需要配置一个AI模型API密钥 (DeepSeek/DashScope/OpenAI等)")
+    if not has_data:
+        raise ValueError("至少需要配置一个数据源API密钥 (FinnHub/Tushare)")
 
     update_progress("环境变量验证通过")
 

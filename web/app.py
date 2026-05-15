@@ -596,26 +596,25 @@ def main():
         
         with st.expander("📋 API密钥配置指南", expanded=True):
             st.markdown("""
-            ### 🔑 必需的API密钥
-            
-            1. **阿里百炼API密钥** (DASHSCOPE_API_KEY)
-               - 获取地址: https://dashscope.aliyun.com/
-               - 用途: AI模型推理
-            
-            2. **金融数据API密钥** (FINNHUB_API_KEY)  
-               - 获取地址: https://finnhub.io/
-               - 用途: 获取股票数据
-            
-            ### ⚙️ 配置方法
-            
-            1. 复制项目根目录的 `.env.example` 为 `.env`
-            2. 编辑 `.env` 文件，填入您的真实API密钥
-            3. 重启Web应用
-            
-            ```bash
-            # .env 文件示例
-            DASHSCOPE_API_KEY=sk-your-dashscope-key
-            FINNHUB_API_KEY=your-finnhub-key
+            ### 🔑 必需配置
+
+            **AI模型密钥** (至少需要一个):
+            - **DeepSeek API** (推荐): https://platform.deepseek.com/
+            - 阿里百炼: https://dashscope.aliyun.com/
+            - OpenAI / Google / Anthropic
+
+            **数据源密钥** (至少需要一个):
+            - **FinnHub**: https://finnhub.io/ (美股数据)
+            - **Tushare**: https://tushare.pro/ (A股数据)
+
+            ### ⚙️ Streamlit Cloud 配置方法
+
+            在 App Settings → Secrets 中添加:
+
+            ```toml
+            DEEPSEEK_API_KEY = "sk-your-key"
+            DEEPSEEK_ENABLED = "true"
+            FINNHUB_API_KEY = "your-finnhub-key"
             ```
             """)
         
